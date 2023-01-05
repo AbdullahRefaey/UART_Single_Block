@@ -1,0 +1,70 @@
+1. UART Single Module:
+This is a Verilog module for a Universal Asynchronous Receiver/Transmitter (UART). The UART is a communication device that is used to transmit and receive serial data.
+The module has six input and output ports:
+clk: This is the clock input, which is used to synchronize the operation of the UART.
+rst: This is the reset input, which is used to reset the internal state of the UART.
+tx_data: This is an 8-bit input port that is used to transmit data. The data is transmitted one bit at a time, starting with the least significant bit.
+tx_en: This is an output port that is used to enable the transmission of data. When tx_en is 1, the data on the tx_data port is transmitted. When tx_en is 0, no data is transmitted.
+rx_data: This is an 8-bit output port that is used to receive data. The data is received one bit at a time, starting with the least significant bit.
+rx_en: This is an input port that is used to enable the reception of data. When rx_en is 1, the UART is in receive mode and data is received on the rx_data port. When rx_en is 0, the UART is in idle mode and no data is received.
+
+The module also has several internal registers:
+tx_state: This is a 3-bit register that is used to store the current state of the transmit state machine.
+rx_state: This is a 3-bit register that is used to store the current state of the receive state machine.
+bit_counter: This is a 16-bit register that is used to keep track of the number of clock cycles that have passed during a transmission or reception.
+
+The module also has several parameters:
+BIT_PERIOD: This is the number of clock cycles that a data bit is transmitted or received.
+START_BIT_PERIOD: This is the number of clock cycles that the start bit is transmitted or received. The start bit is a special bit that indicates the beginning of a transmission or reception.
+STOP_BIT_PERIOD: This is the number of clock cycles that the stop bit is transmitted or received. The stop bit is a special bit that indicates the end of a transmission or reception.
+The module has two always blocks that implement the transmit and receive state machines. The transmit state machine has four states: IDLE, TX_START_BIT, TX_DATA_BITS, and TX_STOP_BIT. 
+The receive state machine has four states: IDLE, RX_START_BIT, RX_DATA_BITS, and RX_STOP_BIT. The state machines use the bit_counter register to keep track of the number of clock cycles 
+that have passed during a transmission or reception.
+
+
+2. UART Transmitter Block.
+This is a Verilog module for a UART transmitter. The UART transmitter is a communication device that is used to transmit serial data.
+
+The module has four input and output ports:
+clk: This is the clock input, which is used to synchronize the operation of the UART transmitter.
+rst: This is the reset input, which is used to reset the internal state of the UART transmitter.
+tx_data: This is an 8-bit input port that is used to transmit data. The data is transmitted one bit at a time, starting with the least significant bit.
+tx_en: This is an output port that is used to enable the transmission of data. When tx_en is 1, the data on the tx_data port is transmitted. When tx_en is 0, no data is transmitted.
+tx_d: This is an output port that is used to transmit the data bits.
+
+The module also has several internal registers:
+tx_state: This is a 3-bit register that is used to store the current state of the transmit state machine.
+bit_counter: This is a 16-bit register that is used to keep track of the number of clock cycles that have passed during a transmission.
+tx_shift_reg: This is an 8-bit register that is used to store the data to be transmitted. It is called a "shift register" because the data is shifted out one bit at a time as it is transmitted.
+
+The module also has several parameters:
+BIT_PERIOD: This is the number of clock cycles that a data bit is transmitted.
+START_BIT_PERIOD: This is the number of clock cycles that the start bit is transmitted. The start bit is a special bit that indicates the beginning of a transmission.
+STOP_BIT_PERIOD: This is the number of clock cycles that the stop bit is transmitted. The stop bit is a special bit that indicates the end of a transmission.
+The module has an always block that implements the transmit state machine. The transmit state machine has four states: IDLE, TX_START_BIT, TX_DATA_BITS, and TX_STOP_BIT. 
+The state machine uses the bit_counter register to keep track of the number of clock cycles that have passed during a transmission. 
+It also uses the tx_shift_reg register to store the data to be transmitted and to shift the data out one bit at a time.
+
+3. UART Receiver Block:
+This is a Verilog module for a UART receiver. The UART receiver is a communication device that is used to receive serial data.
+
+The module has five input and output ports:
+clk: This is the clock input, which is used to synchronize the operation of the UART receiver.
+rst: This is the reset input, which is used to reset the internal state of the UART receiver.
+rx_data: This is an 8-bit output port that is used to receive data. The data is received one bit at a time, starting with the least significant bit.
+rx_en: This is an input port that is used to enable the reception of data. When rx_en is 1, the UART receiver is in receive mode and data is received on the rx_data port. 
+When rx_en is 0, the UART receiver is in idle mode and no data is received.
+rx_d: This is an input port that is used to receive the data bits.
+
+The module also has several internal registers:
+rx_state: This is a 3-bit register that is used to store the current state of the receive state machine.
+bit_counter: This is a 16-bit register that is used to keep track of the number of clock cycles that have passed during a reception.
+rx_shift_reg: This is an 8-bit register that is used to store the received data. It is called a "shift register" because the data is shifted in one bit at a time as it is received.
+
+The module also has several parameters:
+BIT_PERIOD: This is the number of clock cycles that a data bit is received.
+START_BIT_PERIOD: This is the number of clock cycles that the start bit is received. The start bit is a special bit that indicates the beginning of a reception.
+The module has an always block that implements the receive state machine. The receive state machine has four states: IDLE, RX_START_BIT, RX_DATA_BITS, and RX_STOP_BIT. 
+The state machine uses the bit_counter register to keep track of the number of clock cycles that have passed during a reception. 
+It also uses the rx_shift_reg register to store the received data and to shift the data in one bit at a time.
+
