@@ -1,0 +1,90 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: UCD
+// Engineer: Refaey
+// 
+// Create Date: 01/05/2020 10:06:23 AM
+// Design Name: UART_Rx
+// Module Name: 1111
+// Project Name: TDC
+// Target Devices: XC7A-200T
+// Revision 0.03 - File Created
+// Description:
+//Inputs
+  //clk: The clock signal
+  //rst: The reset signal
+  //rx_en: A signal that indicates when to start receiving data
+  //rx_d: The incoming data bits
+
+//Outputs
+  //rx_data: The received data
+
+
+//////////////////////////////////////////////////////////////////////////////////
+module UART_RX (
+  input clk,
+  input rst,
+  output reg [7:0] rx_data,
+  input rx_en,
+  input rx_d
+);
+
+reg [2:0] rx_state;
+reg [15:0] bit_counter;
+reg [7:0] rx_shift_reg;
+
+// Constants for the bit periods in clock cycles
+parameter BIT_PERIOD = 8,
+          START_BIT_PERIOD = 16;
+
+// Constants for the states
+parameter IDLE = 3'b000,
+          RX_START_BIT = 3'b001,
+          RX_DATA_BITS = 3'b010,
+          RX_STOP_BIT = 3'b011;
+
+// Initialize state registers
+always @(posedge clk or negedge rst) begin
+  if (~rst) begin
+    rx_state <= IDLE;
+  end else begin
+    rx_state <= rx_state;
+  end
+end
+
+// Receive state machine
+always @(posedge clk) begin
+  case (rx_state)
+    IDLE: begin
+      if (rx_en) begin
+        rx_state <= RX_START_BIT;
+        bit_counter <= START_BIT_PERIOD;
+      end
+    end
+    RX_START_BIT: begin
+      bit_counter <= bit_counter - 1;
+      if (bit_counter == 0) begin
+        rx_state <= RX_DATA_BITS;
+        bit_counter <= BIT_PERIOD;
+        rx_shift_reg <= {1'b0, rx_shift_reg[7:1]};
+      end
+    end
+    RX_DATA_BITS: begin
+      rx_shift_reg <= {rx_d, rx_shift_reg[7:1]};
+      bit_counter <= bit_counter - 1;
+      if (bit_counter == 0) begin
+        rx_state <= RX_STOP_BIT;
+      end
+    end
+    RX_STOP_BIT: begin
+      rx_shift_reg <= {rx_d, rx_shift_reg[7:1]};
+      rx_state <= IDLE;
+      rx_data <= rx_shift_reg;
+    end
+  endcase
+end
+
+endmodule
+
+
+//Done
