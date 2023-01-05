@@ -1,0 +1,99 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: UCD
+// Engineer: Refaey
+// Create Date: 01/05/2020 10:06:23 AM
+// Module Name: UART_TX
+// Project Name: TDC
+// Target Devices: XC7A-200T
+// Revision 0.03 - File Created
+// Description:
+//Inputs
+  //clk: The clock signal
+  //rst: The reset signal
+  //tx_data: The data to be transmitted
+  //tx_d: The incoming data bits
+
+//Outputs
+  //tx_en: A signal that indicates when the transmitter is active
+  //tx_d: The transmitted data bits
+
+//////////////////////////////////////////////////////////////////////////////////
+
+module UART_TX (
+  input clk,
+  input rst,
+  input [7:0] tx_data,
+  output reg tx_en,
+  output reg tx_d
+);
+
+reg [2:0] tx_state;
+reg [15:0] bit_counter;
+reg [7:0] tx_shift_reg;
+
+// Constants for the bit periods in clock cycles
+parameter BIT_PERIOD = 8,
+          START_BIT_PERIOD = 16,
+          STOP_BIT_PERIOD = 24;
+
+// Constants for the states
+parameter IDLE = 3'b000,
+          TX_START_BIT = 3'b001,
+          TX_DATA_BITS = 3'b010,
+          TX_STOP_BIT = 3'b011;
+
+// Initialize state registers
+always @(posedge clk or negedge rst) begin
+  if (~rst) begin
+    tx_state <= IDLE;
+  end else begin
+    tx_state <= tx_state;
+  end
+end
+
+// Transmit state machine
+always @(posedge clk) begin
+  case (tx_state)
+    IDLE: begin
+      tx_en <= 0;
+      if (tx_data != 0) begin
+        tx_state <= TX_START_BIT;
+        bit_counter <= START_BIT_PERIOD;
+        tx_shift_reg <= tx_data;
+      end
+    end
+    TX_START_BIT: begin
+      tx_en <= 0;
+      tx_d <= 1'b0;
+      bit_counter <= bit_counter - 1;
+      if (bit_counter == 0) begin
+        tx_state <= TX_DATA_BITS;
+        bit_counter <= BIT_PERIOD;
+      end
+    end
+    TX_DATA_BITS: begin
+      tx_en <= 1;
+      tx_d <= tx_shift_reg[0];
+      tx_shift_reg <= {tx_shift_reg[7:1], 1'b0};
+      bit_counter <= bit_counter - 1;
+      if (bit_counter == 0) begin
+        tx_state <= TX_STOP_BIT;
+        bit_counter <= STOP_BIT_PERIOD;
+      end
+    end
+    TX_STOP_BIT: begin
+      tx_en <= 1;
+      tx_d <= 1'b1;
+      bit_counter <= bit_counter - 1;
+      if (bit_counter == 0) begin
+        tx_state <= IDLE;
+      end
+    end
+  endcase
+end
+
+endmodule
+
+
+//Done
