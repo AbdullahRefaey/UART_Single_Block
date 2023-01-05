@@ -2,10 +2,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 // Company: UCD
 // Engineer: Refaey
-// 
 // Create Date: 01/05/2020 10:06:23 AM
-// Design Name: UART_Rx
-// Module Name: 1111
+// Module Name: UART_RX
 // Project Name: TDC
 // Target Devices: XC7A-200T
 // Revision 0.03 - File Created
